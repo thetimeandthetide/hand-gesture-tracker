@@ -28,6 +28,19 @@ let lastFrameAt = 0;
 let lastVideoTime = -1;
 let isRunning = false;
 let lastCountedLabel = '';
+let overlayPixelRatio = 1;
+
+function resizeOverlay() {
+  const { width, height } = stage.getBoundingClientRect();
+  overlayPixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.width = Math.max(1, Math.round(width * overlayPixelRatio));
+  canvas.height = Math.max(1, Math.round(height * overlayPixelRatio));
+  ctx.setTransform(overlayPixelRatio, 0, 0, overlayPixelRatio, 0, 0);
+}
+
+const stageResizeObserver = new ResizeObserver(resizeOverlay);
+stageResizeObserver.observe(stage);
+resizeOverlay();
 
 $('#saveHistory').checked = localStorage.getItem('gesture-lab-save-history') === 'true';
 $('#saveHistory').addEventListener('change', (event) => {
@@ -81,8 +94,16 @@ function classify(model, values) {
 }
 
 function drawHand(landmarks) {
-  const width = canvas.width;
-  const height = canvas.height;
+  const { width, height } = stage.getBoundingClientRect();
+  const coverScale = Math.max(width / video.videoWidth, height / video.videoHeight);
+  const renderedWidth = video.videoWidth * coverScale;
+  const renderedHeight = video.videoHeight * coverScale;
+  const cropX = (width - renderedWidth) / 2;
+  const cropY = (height - renderedHeight) / 2;
+  const position = (point) => [
+    point.x * renderedWidth + cropX,
+    point.y * renderedHeight + cropY,
+  ];
   ctx.clearRect(0, 0, width, height);
   ctx.lineWidth = Math.max(2, width / 360);
   ctx.lineCap = 'round';
@@ -91,15 +112,18 @@ function drawHand(landmarks) {
   ctx.shadowColor = '#c6ff6190';
   ctx.shadowBlur = 7;
   for (const [from, to] of handConnections) {
+    const [fromX, fromY] = position(landmarks[from]);
+    const [toX, toY] = position(landmarks[to]);
     ctx.beginPath();
-    ctx.moveTo(landmarks[from].x * width, landmarks[from].y * height);
-    ctx.lineTo(landmarks[to].x * width, landmarks[to].y * height);
+    ctx.moveTo(fromX, fromY);
+    ctx.lineTo(toX, toY);
     ctx.stroke();
   }
   ctx.shadowBlur = 0;
   for (const point of landmarks) {
+    const [x, y] = position(point);
     ctx.beginPath();
-    ctx.arc(point.x * width, point.y * height, Math.max(2, width / 180), 0, Math.PI * 2);
+    ctx.arc(x, y, Math.max(2, width / 180), 0, Math.PI * 2);
     ctx.fillStyle = '#f0f8dc';
     ctx.fill();
   }
@@ -145,7 +169,8 @@ function processFrame(now) {
   const result = landmarker.detectForVideo(video, now);
   const landmarks = result.landmarks?.[0];
   if (!landmarks) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const { width, height } = stage.getBoundingClientRect();
+    ctx.clearRect(0, 0, width, height);
     fingertipHistory.push([0, 0]);
     if (fingertipHistory.length > 16) fingertipHistory.shift();
     $('#cameraState').textContent = 'Looking for a hand…';
@@ -211,8 +236,7 @@ async function startTracking() {
     stream = await navigator.mediaDevices.getUserMedia({ audio: false, video: { facingMode: 'user', width: { ideal: 960 }, height: { ideal: 540 } } });
     video.srcObject = stream;
     await video.play();
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+    resizeOverlay();
     stage.classList.add('is-live');
     isRunning = true;
     sessionStartedAt = Date.now();
