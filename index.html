@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#101114" />
+    <meta name="description" content="A privacy-first hand gesture tracker powered by MediaPipe and custom TensorFlow Lite classifiers." />
+    <title>Gesture Lab — Hand Gesture Tracker</title>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#top" aria-label="Gesture Lab home"><span class="brand-mark">G</span><span>gesture<span class="brand-light">lab</span></span></a>
+        <div class="topbar-right"><span class="privacy-note"><span class="live-dot"></span> Runs on your device</span><a class="github-link" href="https://github.com/thetimeandthetide/hand-gesture-tracker" target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span></a></div>
+      </header>
+
+      <main id="top">
+        <section class="intro">
+          <div class="eyebrow"><span class="eyebrow-line"></span> COMPUTER VISION · INTERACTIVE DEMO</div>
+          <h1>Your hand.<br /><span>In a new light.</span></h1>
+          <p class="intro-copy">Real-time hand tracking and gesture recognition in your browser. Your camera feed stays on this device.</p>
+        </section>
+
+        <section class="workspace" aria-label="Gesture tracker">
+          <div class="camera-card">
+            <div class="camera-header"><div><span class="camera-title">LIVE TRACKER</span><span class="camera-subtitle" id="cameraState">Camera is off</span></div><span class="status-pill" id="statusPill"><span class="status-indicator"></span><span id="statusText">STANDBY</span></span></div>
+            <div class="camera-stage" id="cameraStage">
+              <video id="camera" playsinline muted></video>
+              <canvas id="overlay" aria-hidden="true"></canvas>
+              <div class="camera-placeholder" id="cameraPlaceholder"><div class="placeholder-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 7.5 8.4 5h7.2L17 7.5h2A2 2 0 0 1 21 9.5v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2Z" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="13.5" r="3.25" stroke="currentColor" stroke-width="1.5"/></svg></div><p>Ready when you are</p><span>Allow camera access to start tracking</span></div>
+              <div class="stage-corner stage-corner-tl"></div><div class="stage-corner stage-corner-tr"></div><div class="stage-corner stage-corner-bl"></div><div class="stage-corner stage-corner-br"></div>
+              <div class="tracking-badge" id="trackingBadge" hidden><span class="live-dot"></span> TRACKING</div>
+            </div>
+            <div class="camera-controls"><button class="start-button" id="startButton"><span class="button-icon" id="buttonIcon">▶</span><span id="buttonText">Start camera</span></button><div class="control-hint" id="controlHint">Camera access is only used for live detection</div></div>
+            <div class="camera-error" id="cameraError" role="alert" hidden></div>
+          </div>
+
+          <aside class="results-panel">
+            <div class="panel-heading"><div><span class="section-kicker">RECOGNITION</span><h2>What I see</h2></div><span class="model-tag"><span class="model-dot"></span> MODEL ACTIVE</span></div>
+            <div class="result-main"><div class="result-icon" id="gestureIcon"><span>✳</span></div><div><span class="result-label">HAND SIGN</span><div class="result-value" id="gestureValue">Waiting</div></div></div>
+            <div class="result-divider"></div>
+            <div class="result-row"><div><span class="result-label">FINGER MOVEMENT</span><div class="result-secondary" id="movementValue">—</div></div><span class="movement-symbol" id="movementSymbol">↗</span></div>
+            <div class="result-row"><div><span class="result-label">HANDEDNESS</span><div class="result-secondary" id="handednessValue">—</div></div><span class="hand-icon">⌁</span></div>
+            <div class="result-row"><div><span class="result-label">CONFIDENCE</span><div class="result-secondary" id="confidenceValue">—</div></div><div class="confidence-track"><span id="confidenceBar"></span></div></div>
+            <div class="gesture-legend"><span class="section-kicker">TRAINED HAND SIGNS</span><div class="legend-items"><span><i>○</i> Open</span><span><i>◌</i> Close</span><span><i>☝</i> Pointer</span><span><i>◎</i> OK</span></div></div>
+          </aside>
+        </section>
+
+        <section class="bottom-grid"><div class="info-card"><span class="section-kicker">HOW IT WORKS</span><p>MediaPipe finds 21 hand landmarks. Two TensorFlow Lite models classify your hand pose and fingertip movement — all in your browser.</p><a href="#pipeline">Explore the pipeline <span>↓</span></a></div><div class="info-card firebase-card"><span class="section-kicker">SESSION HISTORY <span class="firebase-label">FIREBASE</span></span><p id="historyText">Your recent session summaries can be saved securely to your private Firebase account.</p><label class="save-toggle"><input id="saveHistory" type="checkbox" /><span class="toggle-ui"></span><span>Save my session summaries</span></label></div></section>
+
+        <section class="pipeline" id="pipeline"><div><span class="section-kicker">UNDER THE HOOD</span><h2>From pixels to predictions.</h2></div><div class="pipeline-steps"><div><span>01</span><strong>Capture</strong><p>Camera frames stay local.</p></div><i>→</i><div><span>02</span><strong>Landmarks</strong><p>MediaPipe maps 21 points.</p></div><i>→</i><div><span>03</span><strong>Classify</strong><p>Two trained TFLite models.</p></div><i>→</i><div><span>04</span><strong>Display</strong><p>Live results, no uploads.</p></div></div></section>
+      </main>
+      <footer><a class="brand footer-brand" href="#top"><span class="brand-mark">G</span><span>gesture<span class="brand-light">lab</span></span></a><span>Built for the curious. Camera processing stays in your browser.</span><span class="footer-credit">MediaPipe · TensorFlow Lite · Firebase</span></footer>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

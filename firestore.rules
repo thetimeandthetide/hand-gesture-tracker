@@ -1,0 +1,22 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId}/sessions/{sessionId} {
+      allow create: if request.auth != null
+        && request.auth.uid == userId
+        && request.resource.data.keys().hasOnly(['durationSeconds', 'gestureCounts', 'createdAt'])
+        && request.resource.data.durationSeconds is int
+        && request.resource.data.durationSeconds >= 0
+        && request.resource.data.durationSeconds <= 86400
+        && request.resource.data.gestureCounts is map
+        && request.resource.data.gestureCounts.size() <= 4
+        && request.resource.data.gestureCounts.keys().hasOnly(['Open', 'Close', 'Pointer', 'OK'])
+        && (!('Open' in request.resource.data.gestureCounts) || (request.resource.data.gestureCounts.Open is int && request.resource.data.gestureCounts.Open >= 0 && request.resource.data.gestureCounts.Open <= 1000))
+        && (!('Close' in request.resource.data.gestureCounts) || (request.resource.data.gestureCounts.Close is int && request.resource.data.gestureCounts.Close >= 0 && request.resource.data.gestureCounts.Close <= 1000))
+        && (!('Pointer' in request.resource.data.gestureCounts) || (request.resource.data.gestureCounts.Pointer is int && request.resource.data.gestureCounts.Pointer >= 0 && request.resource.data.gestureCounts.Pointer <= 1000))
+        && (!('OK' in request.resource.data.gestureCounts) || (request.resource.data.gestureCounts.OK is int && request.resource.data.gestureCounts.OK >= 0 && request.resource.data.gestureCounts.OK <= 1000))
+        && request.resource.data.createdAt == request.time;
+      allow read, update, delete: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}
