@@ -93,7 +93,7 @@ function classify(model, values) {
   }
 }
 
-function drawHand(landmarks) {
+function drawPreviewAndHand(landmarks) {
   const { width, height } = stage.getBoundingClientRect();
   const coverScale = Math.max(width / video.videoWidth, height / video.videoHeight);
   const renderedWidth = video.videoWidth * coverScale;
@@ -105,6 +105,14 @@ function drawHand(landmarks) {
     point.y * renderedHeight + cropY,
   ];
   ctx.clearRect(0, 0, width, height);
+  ctx.save();
+  ctx.translate(width, 0);
+  ctx.scale(-1, 1);
+  ctx.drawImage(video, cropX, cropY, renderedWidth, renderedHeight);
+  if (!landmarks) {
+    ctx.restore();
+    return;
+  }
   ctx.lineWidth = Math.max(2, width / 360);
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
@@ -127,6 +135,7 @@ function drawHand(landmarks) {
     ctx.fillStyle = '#f0f8dc';
     ctx.fill();
   }
+  ctx.restore();
 }
 
 function showHandResult(result) {
@@ -168,9 +177,8 @@ function processFrame(now) {
   lastFrameAt = now;
   const result = landmarker.detectForVideo(video, now);
   const landmarks = result.landmarks?.[0];
+  drawPreviewAndHand(landmarks ?? null);
   if (!landmarks) {
-    const { width, height } = stage.getBoundingClientRect();
-    ctx.clearRect(0, 0, width, height);
     fingertipHistory.push([0, 0]);
     if (fingertipHistory.length > 16) fingertipHistory.shift();
     $('#cameraState').textContent = 'Looking for a hand…';
@@ -182,7 +190,6 @@ function processFrame(now) {
     lastCountedLabel = '';
     return;
   }
-  drawHand(landmarks);
   $('#cameraState').textContent = 'Hand detected';
   $('#trackingBadge').hidden = false;
   const pose = classify(poseModel, normalizeLandmarks(landmarks));
