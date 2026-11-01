@@ -36,7 +36,7 @@
           </div>
 
           <aside class="results-panel">
-            <div class="panel-heading"><div><span class="section-kicker">RECOGNITION</span><h2>What I see</h2></div><span class="model-tag"><span class="model-dot"></span> MODEL ACTIVE</span></div>
+            <div class="panel-heading"><div><span class="section-kicker">RECOGNITION</span><h2>What I see</h2></div><span class="model-tag"><span class="model-dot"></span> LOCAL MODELS</span></div>
             <div class="result-main"><div class="result-icon" id="gestureIcon"><span>✳</span></div><div><span class="result-label">HAND SIGN</span><div class="result-value" id="gestureValue">Waiting</div></div></div>
             <div class="result-divider"></div>
             <div class="result-row"><div><span class="result-label">FINGER MOVEMENT</span><div class="result-secondary" id="movementValue">—</div></div><span class="movement-symbol" id="movementSymbol">↗</span></div>
@@ -46,7 +46,7 @@
           </aside>
         </section>
 
-        <section class="bottom-grid"><div class="info-card"><span class="section-kicker">HOW IT WORKS</span><p>MediaPipe finds 21 hand landmarks. Two TensorFlow Lite models classify your hand pose and fingertip movement — all in your browser.</p><a href="#pipeline">Explore the pipeline <span>↓</span></a></div><div class="info-card firebase-card"><span class="section-kicker">SESSION HISTORY <span class="firebase-label">FIREBASE</span></span><p id="historyText">Your recent session summaries can be saved securely to your private Firebase account.</p><label class="save-toggle"><input id="saveHistory" type="checkbox" /><span class="toggle-ui"></span><span>Save my session summaries</span></label></div></section>
+        <section class="bottom-grid"><div class="info-card"><span class="section-kicker">HOW IT WORKS</span><p>MediaPipe finds 21 hand landmarks. Two TensorFlow Lite models classify your hand pose and fingertip movement — all in your browser.</p><a href="#pipeline">Explore the pipeline <span>↓</span></a></div><div class="info-card firebase-card"><span class="section-kicker">CLOUD BACKUP <span class="firebase-label">FIREBASE</span></span><p id="historyText">Session summaries can be saved securely to your private Firebase account.</p><label class="save-toggle"><input id="saveHistory" type="checkbox" /><span class="toggle-ui"></span><span>Save my session summaries</span></label></div></section>
 
         <section class="pipeline" id="pipeline"><div><span class="section-kicker">UNDER THE HOOD</span><h2>From pixels to predictions.</h2></div><div class="pipeline-steps"><div><span>01</span><strong>Capture</strong><p>Camera frames stay local.</p></div><i>→</i><div><span>02</span><strong>Landmarks</strong><p>MediaPipe maps 21 points.</p></div><i>→</i><div><span>03</span><strong>Classify</strong><p>Two trained TFLite models.</p></div><i>→</i><div><span>04</span><strong>Display</strong><p>Live results, no uploads.</p></div></div></section>
       </main>
